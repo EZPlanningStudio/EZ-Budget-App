@@ -314,12 +314,12 @@ function init() {
         trigger.style.setProperty("background-image", `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='${arrow}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E")`, "important");
     });
 
-    const savedSection = localStorage.getItem("activeSection");
-    const hasSeenQuickStart = localStorage.getItem("hasSeenQuickStart");
+    const savedSection = localStorage.getItem("ezBudgetActiveSection");
+    const hasSeenQuickStart = localStorage.getItem("ezBudgetHasSeenQuickStart");
 
     if (!hasSeenQuickStart) {
         showSection("quickstart");
-        localStorage.setItem("hasSeenQuickStart", "true");
+        localStorage.setItem("ezBudgetHasSeenQuickStart", "true");
     } else if (savedSection) {
         showSection(savedSection);
     } else {
@@ -1242,7 +1242,7 @@ function setRainbowTitle(text, secondaryWord = null) {
     }
 
     document.querySelectorAll(".title-month-caret").forEach(el => el.remove());
-    const activeSection = localStorage.getItem("activeSection") || "list";
+    const activeSection = localStorage.getItem("ezBudgetActiveSection") || "list";
     if (activeSection === "monthly") {
         const caret = document.createElement("span");
         caret.className = "title-month-caret";
@@ -1303,8 +1303,8 @@ function openAddBillWithDate(dateString) {
 function closeAddBillModal() {
     document.getElementById("addBillModal").classList.remove("active");
     resetForm();
-    if (localStorage.getItem("activeSection") === "add") {
-        localStorage.setItem("activeSection", "list");
+    if (localStorage.getItem("ezBudgetActiveSection") === "add") {
+        localStorage.setItem("ezBudgetActiveSection", "list");
     }
 }
 
@@ -1383,7 +1383,7 @@ function showSection(section) {
     if (existingIpb) existingIpb.remove();
     document.querySelector(".summary-grid-top")?.classList.remove("has-progress-bar");
 
-    localStorage.setItem("activeSection", section);
+    localStorage.setItem("ezBudgetActiveSection", section);
     document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
     document.getElementById(`section-${section}`).classList.add("active");
 
@@ -1421,7 +1421,7 @@ function showSection(section) {
 }
 
 function renderAll() {
-    const activeSection = localStorage.getItem("activeSection") || "list";
+    const activeSection = localStorage.getItem("ezBudgetActiveSection") || "list";
     renderPageHeader(activeSection);
     renderFilterOptions();
     renderBills();
@@ -1559,8 +1559,8 @@ function toggleBackupGuide() {
 
 function closeActivationModal() {
     document.getElementById("activationModal").classList.remove("active");
-    if (localStorage.getItem("activeSection") === "add") {
-        localStorage.setItem("activeSection", "list");
+    if (localStorage.getItem("ezBudgetActiveSection") === "add") {
+        localStorage.setItem("ezBudgetActiveSection", "list");
     }
 }
 
@@ -3053,7 +3053,7 @@ function renderCalendar() {
     }
 
     renderCalSummaryCards();
-    if (localStorage.getItem("activeSection") === "calendar") {
+    if (localStorage.getItem("ezBudgetActiveSection") === "calendar") {
         renderCalProgressBar();
     }
 
