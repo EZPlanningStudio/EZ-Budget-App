@@ -1571,6 +1571,8 @@ function submitActivationCode() {
     if (code === "r8Kp4QxZnV2") {
         localStorage.setItem("ezBudgetActivated", "true");
         closeActivationModal();
+        const menuActivation = document.getElementById("menuActivation");
+        if (menuActivation) menuActivation.style.display = "none";
     } else {
         error.style.display = "block";
         input.value = "";
@@ -4744,11 +4746,11 @@ async function clearBackupDirectoryHandle() {
 
 async function showWelcomeBackupReminder() {
 
-    const hasOpenedBefore = localStorage.getItem("hasOpenedBefore");
+    const hasOpenedBefore = localStorage.getItem("ezBudgetHasOpenedBefore");
     const shownThisSession = sessionStorage.getItem("welcomeBackupShownThisSession");
 
     if (!hasOpenedBefore) {
-        localStorage.setItem("hasOpenedBefore", "true");
+        localStorage.setItem("ezBudgetHasOpenedBefore", "true");
         return;
     }
 
