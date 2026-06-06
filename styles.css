@@ -4790,6 +4790,7 @@
    }
 
    @media (min-width: 551px) and (max-width: 1040px) {
+    
        #addBillModal .modal-box {
            width: min(92vw, 680px);
            height: auto;
@@ -4846,7 +4847,9 @@
            width: 100%;
        }
 
+
    }
+
 
    @media (max-width: 700px) {
        .bill-actions {
@@ -4979,6 +4982,21 @@
 
        .summary-grid-top.has-progress-bar {
            border-bottom: none;
+       }
+
+       .ipb-labels-row {
+           justify-content: space-between;
+           flex-wrap: wrap;
+           gap: 4px 8px;
+           width: auto;
+       }
+
+       .ipb-right-labels {
+           display: none;
+       }
+
+       .ipb-labels-row span {
+           font-size: 12px !important;
        }
 
        .topbar .page-header {
