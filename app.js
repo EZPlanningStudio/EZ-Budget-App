@@ -1820,7 +1820,10 @@ function resetForm() {
 
 function setEditHelpTexts(isRecurring) {
     const helpTexts = {
-        billCategory: "This field cannot be changed after a bill is created. To use a different category, delete this bill and create a new one.",
+        billCategory: "This field cannot be changed after a transaction is created. To use a different category, delete this transaction and create a new one.",
+        billName: "This field cannot be changed after a transaction is created. To use a different name, delete this transaction and create a new one.",
+        billType: "This field cannot be changed after a transaction is created. To use a different type, delete this transaction and create a new one.",
+        billAmount: "This is the planned amount set when the transaction was created. It cannot be changed. If the actual amount paid differs, enter it in Paid Amount below.",
         billName: "This field cannot be changed after a bill is created. To use a different name, delete this bill and create a new one.",
         billType: "This field cannot be changed after a bill is created. To use a different type, delete this bill and create a new one.",
         billAmount: "This is the planned amount set when the bill was created. It cannot be changed. If the actual amount paid differs, enter it in Paid Amount below.",
@@ -1846,8 +1849,8 @@ function resetHelpTexts() {
         billName: "Select the transaction name from the dropdown. Transaction names are managed in the Settings page.",
         billType: "Select Payment for regular transactions and expenses. Select Refund for reimbursements or returned payments.",
         billFrequency: "Select how often this transaction repeats. Choose One-time for a single payment, or Daily, Weekly, Monthly, Yearly for recurring transactions. If you select a recurring frequency, Interval and End Date fields will appear.",
-        billDate: "Enter the bill's due date. For recurring bills, this is the first due date — the recurring series starts from this date. This date is used to organize and calculate expected amounts across all reports.",
-        billFrequency: "Select how often this bill repeats. Choose One-time for a single payment, or Daily, Weekly, Monthly, Yearly for recurring bills. If you select a recurring frequency, Interval and End Date fields will appear.",
+        billDate: "Enter the transaction's due date. For recurring transactions, this is the first due date — the recurring series starts from this date. This date is used to organize and calculate expected amounts across all reports.",
+        billFrequency: "Select how often this transaction repeats. Choose One-time for a single payment, or Daily, Weekly, Monthly, Yearly for recurring transactions. If you select a recurring frequency, Interval and End Date fields will appear.",
         billInterval: "Enter a number that sets how often the transaction repeats based on the selected Frequency. 1 = every unit, 2 = every 2 units, and so on. The Due Date is always the starting point."
     };
 
@@ -1963,7 +1966,7 @@ function deleteBill(id) {
     if (!bill) return;
 
     if (bill.frequency === "one-time") {
-        if (!confirm("Delete this bill?")) return;
+        if (!confirm("Delete this transaction?")) return;
         data.bills = data.bills.filter(b => b.id !== id);
         saveData();
         renderAll();
@@ -2729,8 +2732,8 @@ function renderCalDayPanel(dateString) {
 
     const billCount = bills.length;
     const subLabel = isToday
-        ? `Today · ${billCount} bill${billCount !== 1 ? "s" : ""}`
-        : `${billCount} bill${billCount !== 1 ? "s" : ""}`;
+        ? `Today · ${billCount} transaction${billCount !== 1 ? "s" : ""}`
+        : `${billCount} transaction${billCount !== 1 ? "s" : ""}`;
 
     const billsHtml = bills.length === 0
         ? `<div class="cal-panel-empty">No transactions this day</div>`
@@ -5127,7 +5130,7 @@ async function resetAppStorage() {
 }
 
 async function clearAllData() {
-    if (!confirm("This will delete all bills and saved bill names from this browser. Category titles will stay. Continue?")) return;
+    if (!confirm("This will delete all transactions and saved transaction names from this browser. Category titles will stay. Continue?")) return;
 
     await resetAppStorage();
 
@@ -5515,7 +5518,7 @@ function calBillModalDelete() {
 
     if (bill.frequency === "one-time") {
 
-        if (!confirm("Delete this bill?")) return;
+        if (!confirm("Delete this transaction?")) return;
 
         data.bills = data.bills.filter(b => b.id !== bill.id);
 
