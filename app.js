@@ -2451,9 +2451,9 @@ function renderPageHeader(section) {
 
         const rightLabels = labelSegs.filter(s => s.label !== "left to spend")
             .map(s => `<span style="color:${s.color};font-size:10px;white-space:nowrap;">${s.label === "Debt Payments" ? "Debts" : s.label} <strong>${formatMoney(s.amount)}</strong></span>`)
-            .join("");
+            .join("&nbsp;&nbsp;&nbsp;");
         const leftLabel = labelSegs.find(s => s.label === "left to spend");
-        const leftHtml = leftLabel ? `<span style="color:var(--mint-text);font-size:10px;white-space:nowrap;"><span class="help-icon" data-help-title="Left to Spend — How it works" data-help="This is the amount of cash available after receiving income, setting aside savings, and paying cash/debit expenses.&lt;br&gt;&lt;br&gt;Expenses paid with a credit card are &lt;strong&gt;not deducted&lt;/strong&gt; from this amount — they appear in your category totals but don't affect your available cash.&lt;br&gt;&lt;br&gt;Formula: Rollover + Income received − Savings − Cash expenses" style="cursor:pointer;margin-right:4px;">📊</span>Left to spend <strong>${formatMoney(leftLabel.amount)}</strong></span>` : "";
+        const leftHtml = leftLabel ? `<span style="color:var(--mint-text);font-size:12px;white-space:nowrap;"><span class="help-icon" data-help-title="Left to Spend — How it works" data-help="This is the amount of cash available after receiving income, setting aside savings, and paying cash/debit expenses.&lt;br&gt;&lt;br&gt;Expenses paid with a credit card are &lt;strong&gt;not deducted&lt;/strong&gt; from this amount — they appear in your category totals but don't affect your available cash.&lt;br&gt;&lt;br&gt;Formula: Rollover + Income received − Savings − Cash expenses" style="cursor:pointer;margin-right:4px;">📊</span>Left to spend <strong>${formatMoney(leftLabel.amount)}</strong></span>` : "";
 
         ipb.innerHTML = `
             <div class="ipb-track"><div class="ipb-segments">${segHtml || '<div style="width:100%;height:100%;background:var(--bar-bg);"></div>'}</div></div>
