@@ -1486,7 +1486,7 @@ function renderBillNameOptions() {
             <option value="">Select transaction name</option>
             ${names.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("")}
         `
-        : `<option value="">Add transaction names in Settings first</option>`;
+        : `<option value="">Add names in Settings</option>`;
 }
 
 function renderCustomCurrencies() {
@@ -3267,8 +3267,7 @@ function renderSummaryCard(catColors, monthBills, month, year, _mk) {
                 <div class="mi-budget-top-row">
                     <span class="mi-budget-label" style="color:var(--peach-text);"><span class="help-icon" data-help-title="Rollover — How it works" data-help="Enter the amount left over from the previous month. This is added to your income when calculating your Amount Left to Spend for the current month. If left empty, it is considered 0." style="cursor:pointer;margin-right:6px;">🪙</span>Rollover from ${new Date(year, month - 1).toLocaleString("default", { month: "long" })}</span>
                     <div class="mi-budget-input-row">
-                        <span class="mi-budget-prefix" style="color:var(--peach-text);">$</span>
-                        <div class="mi-budget-hint" id="mi-budget-hint-breakdown"></div>
+                        <span class="mi-budget-prefix" style="color:var(--peach-text);">$</span>                         
                         <input class="mi-budget-input" type="number" placeholder="0.00"
                             style="color:${data.monthlyBudgets?.[_mk]?.rollover > 0 ? 'var(--peach-text)' : 'var(--muted)'};border-color:var(--peach);"
                             value="${data.monthlyBudgets?.[_mk]?.rollover > 0 ? parseFloat(data.monthlyBudgets[_mk].rollover).toFixed(2) : ''}"
@@ -3526,16 +3525,13 @@ function renderCategoryCard(cat, color, monthBills, month, year, overdraftAmount
     return `<span class="help-icon" data-help-title="Monthly Budget — How it works" data-help="Set a monthly budget for this category to track your spending.&lt;br&gt;&lt;br&gt;The progress bar shows how much of your budget has been allocated (actual) and how much has already been paid." style="cursor:pointer;margin-right:6px;">💰</span>Monthly Budget`;
 })()}</span>
                     <div class="mi-budget-input-row">
-                        ${data.settings.currencyPosition !== "after" ? `<span class="mi-budget-prefix" style="color:${color.text};">${String(data.settings.currencySymbol || "$").split("|")[0]}</span>` : ""}
-                        <div class="mi-budget-hint ${overdraftAmount > 0 && budget > 0 ? "visible over" : ""}">${overdraftAmount > 0 && budget > 0 ? `Reduce by ${formatMoney(overdraftAmount)}` : ""}</div>
+                        ${data.settings.currencyPosition !== "after" ? `<span class="mi-budget-prefix" style="color:${color.text};">${String(data.settings.currencySymbol || "$").split("|")[0]}</span>` : ""}                      
                         <input class="mi-budget-input" type="number" placeholder="—"
                             style="color:${color.inputColor};border-color:${color.border};"
                             value="${budget ? budget.toFixed(2) : ""}"
                             data-cat="${cat}"
                             oninput="saveCategoryBudget(this)" onblur="saveCategoryBudgetOnBlur(this)" onkeydown="if(event.key==='Enter')this.blur()" autocomplete="off" autocorrect="off" autocapitalize="off"
-                            onfocus="showBudgetHint(this)"
-                            oninput="showBudgetHint(this)"
-                            onblur="hideBudgetHint(this)">
+                            >
                         ${data.settings.currencyPosition === "after" ? `<span class="mi-budget-prefix" style="color:${color.text};">${String(data.settings.currencySymbol || "$").split("|")[0]}</span>` : ""}
                     </div>
                 </div>
@@ -3625,39 +3621,6 @@ function saveCategoryBudgetOnBlur(input) {
 
     saveData();
     renderMonthlyInsights();
-}
-
-function showBudgetHint(input) {
-    const month = currentCalendarDate.getMonth();
-    const year = currentCalendarDate.getFullYear();
-    const mk = `${year}-${String(month + 1).padStart(2, "0")}`;
-    const totalBudget = parseFloat(data.monthlyBudgets?.[mk]?.total || 0);
-    if (totalBudget <= 0) return;
-    const hint = input.closest(".mi-budget-input-row").querySelector(".mi-budget-hint");
-    if (!hint) return;
-    const current = parseFloat(input.value) || 0;
-    const allInputs = document.querySelectorAll(".mi-budget-input[data-cat]");
-    const catSum = Array.from(allInputs).reduce((s, el) => s + (parseFloat(el.value) || 0), 0);
-    const remaining = totalBudget - catSum;
-    const sym = String(data.settings?.currencySymbol || "$").split("|")[0];
-    const pos = data.settings?.currencyPosition;
-    const fmt = (v) => pos === "after" ? `${Math.abs(v).toFixed(2)}${sym}` : `${sym}${Math.abs(v).toFixed(2)}`;
-    hint.classList.remove("full", "over");
-    if (remaining < 0) {
-        hint.textContent = `${fmt(remaining)} over budget`;
-        hint.classList.add("over");
-    } else if (remaining === 0) {
-        hint.textContent = "Budget fully distributed";
-        hint.classList.add("full");
-    } else {
-        hint.textContent = `${fmt(remaining)} left to distribute`;
-    }
-    hint.classList.add("visible");
-}
-
-function hideBudgetHint(input) {
-    const hint = input.closest(".mi-budget-input-row").querySelector(".mi-budget-hint");
-    if (hint) hint.classList.remove("visible");
 }
 
 function renderMonthlyNotes() {
@@ -5397,7 +5360,9 @@ document.querySelectorAll(".bill-names-column .btn.soft").forEach(btn => {
         input.placeholder = `Type ${cleanTitle}...`;
 
         list.appendChild(input);
-        input.focus();
+        const textInput = input.querySelector(".bill-name-input");
+        if (textInput) textInput.focus();
+        else input.focus();
     });
 });
 

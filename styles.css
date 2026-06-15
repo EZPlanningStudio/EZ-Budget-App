@@ -2648,43 +2648,6 @@
        font-weight: 700;
    }
 
-   .mi-budget-hint {
-       display: none;
-       position: absolute;
-       top: -32px;
-       right: 0;
-       left: auto;
-       background: var(--yellow-soft, #fff);
-       color: var(--red, #cc0000);
-       border: 1px solid var(--red, #cc0000);
-       font-size: 12px;
-       font-weight: 700;
-       padding: 5px 14px;
-       border-radius: 8px;
-       white-space: nowrap;
-       pointer-events: none;
-       z-index: 10;
-   }
-
-   .mi-budget-hint.visible {
-       display: block;
-       background: #eaf8f0;
-       color: #5aad80;
-       border-color: #5aad80;
-   }
-
-   .mi-budget-hint.visible.full {
-       background: #fff8e0;
-       color: #c48600;
-       border-color: #c48600;
-   }
-
-   .mi-budget-hint.visible.over {
-       background: #ffe0e0;
-       color: #cc0000;
-       border-color: #cc0000;
-   }
-
    .mi-overdraft-warning {
        background: #ffe0e0;
        color: #cc0000;
@@ -5105,8 +5068,12 @@
            order: 4;
        }
 
-       #billPaidAmountWrap {
+       #billCreditCardWrap {
            order: 5;
+       }
+
+       #billPaidAmountWrap {
+           order: 6;
        }
 
        .form-grid label:has(#billDate) {
