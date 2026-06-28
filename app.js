@@ -45,6 +45,8 @@ const defaultData = {
 };
 
 let data = loadData();
+function isIncomeCategory(cat) { return cat === data.categories[0]; }
+function isSavingsCategory(cat) { return cat === data.categories[1]; }
 let activeFilter = "all";
 let currentCalendarDate = new Date();
 let backupDirty = false;
@@ -1987,23 +1989,23 @@ function deleteBill(id) {
 
 function getPaidLabel(bill) {
     if (bill.type === "refund") {
-        if (bill.category === "Savings") return "Withdrawn";
-        if (bill.category === "Income") return "Returned";
+        if (isSavingsCategory(bill.category)) return "Withdrawn";
+        if (isIncomeCategory(bill.category)) return "Returned";
         return "Received";
     }
-    if (bill.category === "Income") return "Received";
-    if (bill.category === "Savings") return "Saved";
+    if (isIncomeCategory(bill.category)) return "Received";
+    if (isSavingsCategory(bill.category)) return "Saved";
     return "Paid";
 }
 
 function getUnpaidLabel(bill) {
     if (bill.type === "refund") {
-        if (bill.category === "Savings") return "Not Withdrawn";
-        if (bill.category === "Income") return "Not Returned";
+        if (isSavingsCategory(bill.category)) return "Not Withdrawn";
+        if (isIncomeCategory(bill.category)) return "Not Returned";
         return "Not Received";
     }
-    if (bill.category === "Income") return "Not Received";
-    if (bill.category === "Savings") return "Not Saved";
+    if (isIncomeCategory(bill.category)) return "Not Received";
+    if (isSavingsCategory(bill.category)) return "Not Saved";
     return "Unpaid";
 }
 
@@ -2028,7 +2030,7 @@ function updatePaidLabels() {
     let amountHelp = "Enter a New/Paid Amount if the actual paid amount differs from the planned Amount.";
     let dateHelp = "Enter a New/Paid Date if the actual payment date differs from the original Due Date.";
 
-    if (category === "Income") {
+    if (isIncomeCategory(category)) {
         if (type === "payment") {
             amountText = "New/Received Amount";
             amountHelp = "Enter a New/Received Amount if the actual received amount differs from the planned Amount.";
@@ -2038,7 +2040,7 @@ function updatePaidLabels() {
         }
         dateText = "New/Actual Date";
         dateHelp = "Enter the actual date if it differs from the original Due Date.";
-    } else if (category === "Savings") {
+    } else if (isSavingsCategory(category)) {
         if (type === "payment") {
             amountText = "New/Saved Amount";
             amountHelp = "Enter a New/Saved Amount if the actual saved amount differs from the planned Amount.";
@@ -2107,7 +2109,7 @@ function updateTypeOptions(forceType = null) {
 
     els.billType.disabled = false;
 
-    if (category === "Income") {
+    if (isIncomeCategory(category)) {
         options = `<option value="">Select type</option>
                    <option value="payment">Received</option>
                    <option value="refund">Returned</option>`;
@@ -2130,7 +2132,7 @@ function updateTypeOptions(forceType = null) {
             if (priorityWrap) priorityWrap.style.display = "";
         }
     } else {
-        if (category === "Savings") {
+        if (isSavingsCategory(category)) {
             options = `<option value="">Select type</option>
                        <option value="payment">Deposit</option>
                        <option value="refund">Withdrawal</option>`;
@@ -2154,9 +2156,9 @@ function updateSaveAndMarkBtn() {
     const isRefund = els.billType.value === "refund";
     const saveAndPaidBtn = document.getElementById("saveAndPaidBtn");
     if (!saveAndPaidBtn) return;
-    if (category === "Income") {
+    if (isIncomeCategory(category)) {
         saveAndPaidBtn.textContent = isRefund ? "Save & Mark Returned" : "Save & Mark Received";
-    } else if (category === "Savings") {
+    } else if (isSavingsCategory(category)) {
         saveAndPaidBtn.textContent = isRefund ? "Save & Mark Withdrawn" : "Save & Mark Saved";
     } else {
         saveAndPaidBtn.textContent = isRefund ? "Save & Mark Refunded" : "Save & Mark Paid";
@@ -2165,19 +2167,19 @@ function updateSaveAndMarkBtn() {
 
 function getMarkPaidLabel(bill) {
     if (bill.type === "refund") {
-        return bill.category === "Savings" ? "Mark Withdrawn" : "Mark Returned";
+        return isSavingsCategory(bill.category) ? "Mark Withdrawn" : "Mark Returned";
     }
-    if (bill.category === "Income") return "Mark Received";
-    if (bill.category === "Savings") return "Mark Saved";
+    if (isIncomeCategory(bill.category)) return "Mark Received";
+    if (isSavingsCategory(bill.category)) return "Mark Saved";
     return "Mark Paid";
 }
 
 function getMarkUnpaidLabel(bill) {
     if (bill.type === "refund") {
-        return bill.category === "Savings" ? "Mark Not Withdrawn" : "Mark Not Returned";
+        return isSavingsCategory(bill.category) ? "Mark Not Withdrawn" : "Mark Not Returned";
     }
-    if (bill.category === "Income") return "Mark Not Received";
-    if (bill.category === "Savings") return "Mark Not Saved";
+    if (isIncomeCategory(bill.category)) return "Mark Not Received";
+    if (isSavingsCategory(bill.category)) return "Mark Not Saved";
     return "Mark Unpaid";
 }
 
@@ -2293,13 +2295,13 @@ function renderBills() {
     els.billList.innerHTML = filtered.map(bill => {
         const status = getBillStatus(bill);
         return `
-        <div class="bill-card ${status} ${bill.paid && statusFilter !== "paid" ? "paid-muted" : `category-color-${Math.max(1, data.categories.indexOf(bill.category) + 1)}`} ${bill.category === "Income" && bill.type === "payment" ? "priority-border-none" : `priority-border-${Number(bill.priority) + 1}`}">
+        <div class="bill-card ${status} ${bill.paid && statusFilter !== "paid" ? "paid-muted" : `category-color-${Math.max(1, data.categories.indexOf(bill.category) + 1)}`} ${isIncomeCategory(bill.category) && bill.type === "payment" ? "priority-border-none" : `priority-border-${Number(bill.priority) + 1}`}">
         <div class="bill-info">
   <div class="bill-meta bill-main-line" style="justify-content:space-between;">
     <span class="bill-title-inline app-tooltip-trigger"><span class="bill-title-text">${escapeHtml(bill.name)}</span><span class="app-tooltip">${data.priorityNames[Number(bill.priority)] || "Priority"}</span></span>
     <span class="bill-amount-wrap">
     <span class="bill-amount">
-        ${bill.type === "refund" ? `<span class="bill-refund-icon ${["Income", "Savings"].includes(bill.category) ? "refund-out" : "refund-in"} app-tooltip-trigger">&#x27A1;<span class="app-tooltip">Refund</span></span>` : ""}
+        ${bill.type === "refund" ? `<span class="bill-refund-icon ${(isIncomeCategory(bill.category) || isSavingsCategory(bill.category)) ? "refund-out" : "refund-in"} app-tooltip-trigger">&#x27A1;<span class="app-tooltip">Refund</span></span>` : ""}
         <span class="bill-frequency-icon">
             <span class="app-tooltip-trigger">
                 ${bill.frequency === "one-time" ? "◷" : "↻"}
@@ -2508,12 +2510,12 @@ function renderCalProgressBar() {
 
     function getAmount(b) { return parseFloat(b.actualAmount ?? b.amount) || 0; }
 
-    const incomeReceived = bills.filter(b => b.category === "Income" && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
-    const incomeReturned = bills.filter(b => b.category === "Income" && b.type === "refund" && b.paid).reduce((s, b) => s + getAmount(b), 0);
+    const incomeReceived = bills.filter(b => isIncomeCategory(b.category) && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
+    const incomeReturned = bills.filter(b => isIncomeCategory(b.category) && b.type === "refund" && b.paid).reduce((s, b) => s + getAmount(b), 0);
     const expensesPaid = bills.filter(b => ["Bills", "Expenses", "Debt Payments"].includes(b.category) && b.type === "payment" && b.paid && !b.creditCard).reduce((s, b) => s + getAmount(b), 0);
     const expensesRefunded = bills.filter(b => ["Bills", "Expenses", "Debt Payments"].includes(b.category) && b.type === "refund" && b.paid).reduce((s, b) => s + getAmount(b), 0);
-    const savingsDone = bills.filter(b => b.category === "Savings" && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
-    const savingsWithdrawn = bills.filter(b => b.category === "Savings" && b.type === "refund" && b.paid).reduce((s, b) => s + getAmount(b), 0);
+    const savingsDone = bills.filter(b => isSavingsCategory(b.category) && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
+    const savingsWithdrawn = bills.filter(b => isSavingsCategory(b.category) && b.type === "refund" && b.paid).reduce((s, b) => s + getAmount(b), 0);
 
     const netIncome = incomeReceived - incomeReturned;
     const totalSpent = expensesPaid - expensesRefunded + savingsDone - savingsWithdrawn;
@@ -2607,9 +2609,9 @@ function renderListProgressBar() {
 
     function getAmount(b) { return parseFloat(b.actualAmount ?? b.amount) || 0; }
 
-    const incomeReceived = bills.filter(b => b.category === "Income" && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
+    const incomeReceived = bills.filter(b => isIncomeCategory(b.category) && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
     const expensesPaid = bills.filter(b => ["Bills", "Expenses", "Debt Payments"].includes(b.category) && b.type === "payment" && b.paid && !b.creditCard).reduce((s, b) => s + getAmount(b), 0);
-    const savingsDone = bills.filter(b => b.category === "Savings" && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
+    const savingsDone = bills.filter(b => isSavingsCategory(b.category) && b.type === "payment" && b.paid).reduce((s, b) => s + getAmount(b), 0);
 
     const totalSpent = expensesPaid + savingsDone;
     const pct = incomeReceived > 0 ? Math.round((totalSpent / incomeReceived) * 100) : 0;
@@ -2748,7 +2750,7 @@ function renderCalDayPanel(dateString) {
             const status = getBillStatus(bill);
             const amount = formatMoney(getBillDisplayAmount(bill));
             const priIndex = bill.priority != null ? Number(bill.priority) + 1 : 5;
-            const isIncomeReceived = bill.category === "Income" && bill.type === "payment";
+            const isIncomeReceived = isIncomeCategory(bill.category) && bill.type === "payment";
             const dotColor = isIncomeReceived ? "transparent" : `var(--priority-${priIndex}-color)`;
             const catIndex = Math.max(1, data.categories.indexOf(bill.category) + 1);
 
@@ -2771,7 +2773,7 @@ function renderCalDayPanel(dateString) {
                         <div class="cal-panel-name">${escapeHtml(bill.name)}</div>
                         ${bill.notes ? `<div class="cal-panel-notes">${escapeHtml(bill.notes)}</div>` : ""}
                     </div>
-                    <div class="cal-panel-amount">${bill.type === "refund" ? `<span class="bill-refund-icon ${["Income", "Savings"].includes(bill.category) ? "refund-out" : "refund-in"}">&#x27A1;</span>` : ""}<span class="bill-frequency-icon">${bill.frequency === "one-time" ? "◷" : "↻"}</span><span>${amount}</span></div>
+                    <div class="cal-panel-amount">${bill.type === "refund" ? `<span class="bill-refund-icon ${(isIncomeCategory(bill.category) || isSavingsCategory(bill.category)) ? "refund-out" : "refund-in"}">&#x27A1;</span>` : ""}<span class="bill-frequency-icon">${bill.frequency === "one-time" ? "◷" : "↻"}</span><span>${amount}</span></div>
                 </div>`;
         }).join("");
 
@@ -2991,7 +2993,7 @@ function renderCalendar() {
             const selectedClass = dateString === selectedCalDay ? " selected-day" : "";
             const pips = bills.map(b => {
                 const pi = b.priority != null ? Number(b.priority) + 1 : 5;
-                const isIncomeReceived = b.category === "Income" && b.type === "payment";
+                const isIncomeReceived = isIncomeCategory(b.category) && b.type === "payment";
                 const color = isIncomeReceived ? "var(--mint)" : `var(--priority-${pi}-color)`;
                 return `<div class="cal-pip" style="background:${b.paid ? "var(--done-text)" : color}; opacity:${b.paid ? "0.45" : "1"};"></div>`;
             }).join("");
@@ -3009,7 +3011,7 @@ function renderCalendar() {
                 const status = getBillStatus(bill);
                 const catIndex = Math.max(1, data.categories.indexOf(bill.category) + 1);
                 const priIndex = Number(bill.priority) + 1;
-                const barClass = (bill.category === "Income" && bill.type === "payment") ? "pri-bar-none" : `pri-bar-${priIndex}`;
+                const barClass = (isIncomeCategory(bill.category) && bill.type === "payment") ? "pri-bar-none" : `pri-bar-${priIndex}`;
                 return `<button class="cal-bill ${status} category-color-${catIndex}" data-bill-id="${bill.id}" onclick="openCalBillModal('${bill.id}')" title="${escapeHtml(bill.name)}"><span class="cal-bill-bar ${barClass}"></span><span class="cal-bill-name">${escapeHtml(bill.name)}</span>
                 <span class="cal-bill-amount"  >${formatMoney(getBillDisplayAmount(bill))}</span>
                 </button>`;
@@ -4351,8 +4353,8 @@ function sortBills(arr) {
         const dateA = getBillDisplayDate(a);
         const dateB = getBillDisplayDate(b);
         if (dateA !== dateB) return dateA.localeCompare(dateB);
-        const isIncomeReceivedA = a.category === "Income" && a.type === "payment";
-        const isIncomeReceivedB = b.category === "Income" && b.type === "payment";
+        const isIncomeReceivedA = isIncomeCategory(a.category) && a.type === "payment";
+        const isIncomeReceivedB = isIncomeCategory(b.category) && b.type === "payment";
         if (isIncomeReceivedA && !isIncomeReceivedB) return -1;
         if (!isIncomeReceivedA && isIncomeReceivedB) return 1;
         return (Number(a.priority) || 2) - (Number(b.priority) || 2);
@@ -4364,8 +4366,8 @@ function sortBillsChronological(arr) {
         const dateA = getBillDisplayDate(a);
         const dateB = getBillDisplayDate(b);
         if (dateA !== dateB) return dateA.localeCompare(dateB);
-        const isIncomeReceivedA = a.category === "Income" && a.type === "payment";
-        const isIncomeReceivedB = b.category === "Income" && b.type === "payment";
+        const isIncomeReceivedA = isIncomeCategory(a.category) && a.type === "payment";
+        const isIncomeReceivedB = isIncomeCategory(b.category) && b.type === "payment";
         if (isIncomeReceivedA && !isIncomeReceivedB) return -1;
         if (!isIncomeReceivedA && isIncomeReceivedB) return 1;
         const priA = isIncomeReceivedA ? -1 : (Number(a.priority) !== 0 ? Number(a.priority) : 99);
@@ -5408,7 +5410,7 @@ function openCalBillModal(billId) {
         }
 
     <span class="bill-amount">
-        ${bill.type === "refund" ? `<span class="bill-refund-icon ${["Income", "Savings"].includes(bill.category) ? "refund-out" : "refund-in"} app-tooltip-trigger">&#x27A1;<span class="app-tooltip">${bill.category === "Income" ? "Returned" : bill.category === "Savings" ? "Withdrawn" : "Received"}</span></span>` : ""}
+        ${bill.type === "refund" ? `<span class="bill-refund-icon ${(isIncomeCategory(bill.category) || isSavingsCategory(bill.category)) ? "refund-out" : "refund-in"} app-tooltip-trigger">&#x27A1;<span class="app-tooltip">${isIncomeCategory(bill.category) ? "Returned" : isSavingsCategory(bill.category) ? "Withdrawn" : "Received"}</span></span>` : ""}
         <span class="bill-frequency-icon">
             <span class="app-tooltip-trigger">
                 ${bill.frequency === "one-time" ? "◷" : "↻"}
