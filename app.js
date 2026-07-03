@@ -203,7 +203,7 @@ function extendRecurringSeries() {
         switch (last.frequency) {
             case "daily": next.setDate(next.getDate() + last.interval); break;
             case "weekly": next.setDate(next.getDate() + 7 * last.interval); break;
-            case "monthly": next.setMonth(next.getMonth() + last.interval); break;
+            case "monthly": { const _dayL = next.getDate(); next.setDate(1); next.setMonth(next.getMonth() + last.interval); next.setDate(Math.min(_dayL, new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate())); break; }
             case "yearly": next.setFullYear(next.getFullYear() + last.interval); break;
         }
 
@@ -1540,7 +1540,7 @@ function generateRecurringBills(bill) {
         switch (bill.frequency) {
             case "daily": next.setDate(next.getDate() + bill.interval); break;
             case "weekly": next.setDate(next.getDate() + 7 * bill.interval); break;
-            case "monthly": next.setMonth(next.getMonth() + bill.interval); break;
+            case "monthly": { const _dayB = next.getDate(); next.setDate(1); next.setMonth(next.getMonth() + bill.interval); next.setDate(Math.min(_dayB, new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate())); break; }
             case "yearly": next.setFullYear(next.getFullYear() + bill.interval); break;
         }
         current = next;
@@ -1555,6 +1555,8 @@ function isActivated() {
 }
 
 function showActivationModal() {
+    document.getElementById("activationCodeInput").value = "";
+    document.getElementById("activationError").style.display = "none";
     document.getElementById("activationModal").classList.add("active");
 }
 
